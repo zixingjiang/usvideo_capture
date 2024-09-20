@@ -15,7 +15,7 @@ This package contains a simple python script to capture live ultrasound video fr
 2. Clone this repository to your workspace
 ```
 cd /path/to/your/workspace
-git clone https://github.com/zixingjiang/py-us-video-capture-tool.git
+git clone https://github.com/zixingjiang/py-us-video-capture.git
 ```
 3. Install required packages:
 ```
@@ -79,7 +79,10 @@ If you need to use UDP communication with the robot for target selection, you ne
 ## Quick launch
 To avoid typing a long command line every time, you can create a shell script to launch the script with your preferred arguments. See ```quick_launch.ps1``` for Windows Powershell and ```quick_launch.sh``` for Bash.
 
-## User manual
+## User guide
+
+See ```recording/2024-09-20_18_39_28.mp4``` for video demonstration.
+
 If the script is successfully launched, you will see a window displaying the video and a log in the terminal.
 
 ![interface](doc/interface.png)
