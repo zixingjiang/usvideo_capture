@@ -3,6 +3,7 @@ import threading
 import signal
 import struct
 import argparse
+import datetime
 
 # Flag to control the server loop
 running = True
@@ -15,7 +16,7 @@ def handle_client(server_socket):
                 unpacked_data = struct.unpack('>2d', data)
                 x = unpacked_data[0]
                 y = unpacked_data[1]
-                print(f"Received target from {addr}: (x = {x} mm, y = {y} mm)")
+                print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Received target from {addr}: (x = {x} mm, y = {y} mm)")
         except socket.timeout:
             continue
 

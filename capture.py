@@ -1,3 +1,6 @@
+# A simple python script for live ultrasound video capture
+# author: Zixing Jiang (zxjiang@surgery.cuhk.edu.hk)
+
 import cv2         # for video frame processing
 import datetime    # for timestamp
 import os          # for file operations
@@ -56,11 +59,13 @@ class Capture():
             self.capture = cv2.VideoCapture(self.video_device, cv2.CAP_DSHOW)
             self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.video_width)
             self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.video_height)
+            print(f"Video source: video device {self.video_device}")
         else:
             self.capture = cv2.VideoCapture(self.video_file_path)
             self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.video_width)
             self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.video_height)
             self.replay_fps = self.capture.get(cv2.CAP_PROP_FPS)
+            print(f"Video source: video file {self.video_file_path}")
 
         # check video source
         if not self.capture.isOpened():
@@ -254,21 +259,15 @@ if __name__ == '__main__':
 
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='A simple python script for ultrasound video capture')
-    
-
     parser.add_argument('--capture_live_video', action=argparse.BooleanOptionalAction, help='Capture live video from the capture device. Otherwise, replay video from the video file')
     parser.add_argument('--video_device', type=int, default=0, help='Capture device index')
-    
-    parser.add_argument('--video_file_path', type=str, default='video.mp4', help='Path to the video file that will be replayed')
+    parser.add_argument('--video_file_path', type=str, default='recording/video.mp4', help='Path to the video file that will be replayed')
     parser.add_argument('--video_save_dir', type=str, default='recording', help='Directory to save the recording')
     parser.add_argument('--video_save_fps', type=int, default=60, help='Frame per second of the saved video')
-    
     parser.add_argument('--video_width', type=int, default=1024, help='Width of the video in pixel')
     parser.add_argument('--video_height', type=int, default=768, help='Height of the video in pixel')
-    
     parser.add_argument('--video_origin_x', type=int, default=512, help='X coordinate of the video origin in pixel')
     parser.add_argument('--video_origin_y', type=int, default=145, help='Y coordinate of the video origin in pixel')
-
     parser.add_argument('--self_ip', type=str, default='127.0.0.1', help='Own IP address used to send UDP packets')
     parser.add_argument('--self_port', type=int, default=60511, help='Own port number used to send UDP packets')
     parser.add_argument('--robot_ip', type=str, default='127.0.0.1', help='Robot IP address to receive UDP packets')
