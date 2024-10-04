@@ -1,7 +1,7 @@
 # User guide
 If the script is successfully launched, you will see a window displaying the video and a log in the terminal.
 
-![interface](interface.png)
+![interface](figures/interface.png)
 
 ## Video recording
 Keeping the video window in focus, press the keyboard ```s``` key to start/stop video recording. By default, the recorded video is saved in the ```recording``` folder, and the video file name is the time you started recording. The following log in the terminal indicates successful recording:
@@ -15,11 +15,11 @@ Recording saved at recording/2024-09-20_17_42_20.mp4
 ## Calibration mode
 Keeping the video window in focus, press the keyboard ```c``` key to enter/exit calibration mode. In this mode, your mouse will turn into a green crosshair. 
 
-![calibration](calibration.png)
+![calibration](figures/calibration.png)
 
 Click on the video window and select two points with a known vertical distance of 10 mm. The script will calculate the pixel distance between these two points and then calculate the pixel-to-millimeter ratio.
 
-![pixel-to-mm](pixel-to-mm.png)
+![pixel-to-mm](figures/pixel-to-mm.png)
 
 After calibration, there will be yellow dots and line segments marking the ultrasound frame origin and the pixel-to-millimeter ratio.
 
@@ -30,7 +30,7 @@ You can recalibrate by exiting and re-entering the calibration mode.
 
 Keeping the video window in focus, press the keyboard ```t``` key to enter/exit target selection mode. In this mode, your mouse will turn into a cyan crosshair.
 
-![target](target.png)
+![target](figures/target.png)
 
 You can select or deselect targets by left/right clicking on the video window. The selected targets will be marked with red dots.
 You can send selected targets to the robot via UDP by middle mouse click or ctrl+left click. Sent targets are marked with green dots. Targets are described by millimeter coordinates, which are calculated based on the manually calibrated pixel-to-millimeter ratio. 
