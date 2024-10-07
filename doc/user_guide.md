@@ -11,6 +11,7 @@ Recording stopped
 End recording at 2024-09-20_17:42:24
 Recording saved at recording/2024-09-20_17_42_20.mp4
 ```
+A recorded demo video is provided at [recording/demo.mp4](https://github.com/zixingjiang/py-us-video-capture/raw/refs/heads/main/recording/demo.mp4).
 
 ## Calibration mode
 Keeping the video window in focus, press the keyboard ```c``` key to enter/exit calibration mode. In this mode, your mouse will turn into a green crosshair. 
