@@ -1,6 +1,8 @@
 # A simple python script for capturing live ultrasound video 
 
-This repo contains a simple python script [capture.py](https://github.com/zixingjiang/py-us-video-capture/blob/main/capture.py) for capturing live ultrasound video from clinical ultrasound devices using a [video capture card](https://www.amazon.com/UGREEN-Recording-Streaming-Teaching-Conference/dp/B0BGMYPBF4/ref=asc_df_B0BGMYPBF4/?tag=hkgoshpadde-20&linkCode=df0&hvadid=680049709844&hvpos=&hvnetw=g&hvrand=2027351292518295012&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9191495&hvtargid=pla-1943464770846&psc=1&language=en_US&mcid=6c4da96552333c2cb6d45d0a261ab674). It is part of the code for research projects on robot-assisted ultrasound from the [Advanced Bio-Medical Robotics Lab](https://research.surgery.cuhk.edu.hk/lizhengrobotics/), CUHK. 
+This repository contains a simple python script, [capture.py](https://github.com/zixingjiang/py-us-video-capture/blob/main/capture.py), for capturing live ultrasound video from clinical ultrasound equipment using a [video capture card](https://www.amazon.com/UGREEN-Recording-Streaming-Teaching-Conference/dp/B0BGMYPBF4/ref=asc_df_B0BGMYPBF4/?tag=hkgoshpadde-20&linkCode=df0&hvadid=680049709844&hvpos=&hvnetw=g&hvrand=2027351292518295012&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9191495&hvtargid=pla-1943464770846&psc=1&language=en_US&mcid=6c4da96552333c2cb6d45d0a261ab674). It is part of the code for robot-assisted ultrasound projects at the [Advanced Bio-Medical Robotics Lab](https://research.surgery.cuhk.edu.hk/lizhengrobotics/), The Chinese University of Hong Kong.
+
+ 
 
 **Features**: This script provides the following features:
 - Capture live ultrasound video
@@ -10,8 +12,10 @@ This repo contains a simple python script [capture.py](https://github.com/zixing
 
 **Compatibility**: This script is tested with [Wisonic Clover](https://www.wisonic.com/en/list_26/189.html) and [bk5000](https://www.bkmedical.com/systems/bk5000/). Theoretically, it can be used with any ultrasound machine or other device with video export function.
 
+**Supported OS**: Tested on [Windows 11](https://www.microsoft.com/en-us/software-download/windows11) and [Ubuntu 24.04](https://ubuntu.com/download/desktop).
+
 ## Getting started 
-1. Install [Python3](https://www.python.org/downloads/). Recommended version: >= 3.11. 
+1. Install [Python3](https://www.python.org/downloads/). Recommended version: 3.11. 
 2. Clone this repository to your workspace
 ```
 cd /path/to/your/workspace
@@ -21,7 +25,7 @@ git clone https://github.com/zixingjiang/py-us-video-capture.git
 ```
 pip install -r requirements.txt
 ```
-1. Run the script. The following command launches the script with [default arguments](#default-values). For more command line arguments, see the [Command line arguments](#command-line-arguments) section. For more information on keyboard and mouse interaction with the script, see the [user guide](https://github.com/zixingjiang/py-us-video-capture/blob/main/doc/user_guide.md).
+1. Run the script. The following command launches the script with [default arguments](#default-values). For more command line arguments, see the [Command line arguments](#command-line-arguments) section. For more information on keyboard and mouse interaction with the script, please refer to the [user guide](https://github.com/zixingjiang/py-us-video-capture/blob/main/doc/user_guide.md).
 ```
 python capture.py
 ```
@@ -65,7 +69,8 @@ options:
 
 ### Video source
 - Set ```--capture_live_video``` to capture live video from the capture device. Otherwise, the script will replay video from the video file specified by ```--video_file_path```.
-- Specify the capture device index by ```--video_device```. Usually 0 refers to the laptop's built-in camera. You may try 1, 2, etc. to use the video capture card.
+- Specify the capture device by ```--video_device```. On Windows OS, this script uses the [DirectShow](https://learn.microsoft.com/en-us/windows/win32/directshow/directshow) backend to capture video, which accepts a digit device index, such as 0, 1, 2, etc (usually 0 is the laptop's built-in camera). On Linux OS, this script uses the [V4L2](https://en.wikipedia.org/wiki/Video4Linux) backend to capture video, which accepts a device path, such as /dev/video0, /dev/video1, etc. **To be consistent with the Windows case, [this script already includes the device path prefix](https://github.com/zixingjiang/py-us-video-capture/blob/main/capture.py#L27), so you can directly use the device index, such as 0, 1, 2, here.**
+
 
 ### Frame origin
 If you need to use the calibration and target selection functions, you need to specify the origin of the ultrasonic video frame. The origin may be different for different ultrasound devices. It is recommended that you capture a video first, then measure the pixel coordinates of the origin in the video and pass them to this script via ```--video_origin_x``` and ```--video_origin_y``` arguments.

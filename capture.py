@@ -8,6 +8,7 @@ import math        # for closest point calculation
 import socket      # for UDP communication
 import struct      # for packing data
 import argparse    # for command line arguments
+import platform    # for OS detection
 
 class Capture():
 
@@ -19,7 +20,14 @@ class Capture():
         self.udp_sent_points = []
 
         self.capture_live_video = args.capture_live_video
-        self.video_device = args.video_device
+
+        if platform.system() == 'Windows':
+            self.video_device = args.video_device
+        elif platform.system() == 'Linux':
+            self.video_device = '/dev/video' + str(args.video_device)
+        else:
+            raise EnvironmentError("Unsupported OS")
+        
         self.video_file_path = args.video_file_path
         self.video_width = args.video_width
         self.video_height = args.video_height
@@ -56,7 +64,12 @@ class Capture():
         self.state = self.NORMAL
 
         if self.capture_live_video:
-            self.capture = cv2.VideoCapture(self.video_device, cv2.CAP_DSHOW)
+            if platform.system() == 'Windows':
+                self.capture = cv2.VideoCapture(self.video_device, cv2.CAP_DSHOW)
+            elif platform.system() == 'Linux':
+                self.capture = cv2.VideoCapture(self.video_device, cv2.CAP_V4L2)
+            else:
+                raise EnvironmentError("Unsupported OS")
             self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.video_width)
             self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.video_height)
             print(f"Video source: video device {self.video_device}")
@@ -71,8 +84,8 @@ class Capture():
         if not self.capture.isOpened():
             print("Error: Unable to open video source, please check the video device index or video file path")
             return
-
-        cv2.namedWindow('Ultrasound Video Capture')
+        
+        cv2.namedWindow('Ultrasound Video Capture', cv2.WINDOW_GUI_NORMAL)
         cv2.setMouseCallback('Ultrasound Video Capture', self.mouse_callback)
 
         print("Starting ultrasound video capture")
@@ -160,7 +173,6 @@ class Capture():
 
             # press 'c' to toggle calibration mode
             elif key == ord('c' or 'C'):
-                print(self.state)
                 if self.state == self.NORMAL:
                     self.state = self.CALIBRATION
                     self.flag_calibrated = False
