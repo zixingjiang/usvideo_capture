@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# example 1: capture live video from device 0
-# --video_device 0 is usually the built-in camera of your laptop
-# for other devices, you can use --video_device 1, --video_device 2, etc.
+# Example 1: capture live video from device /dev/video0,
+# which is usually the built-in camera of your laptop.
+# For other devices, you can use --video_device 1, --video_device 2, etc.
+# attention: the script already includes the device path "/dev/video",
+# so you only need to specify the device number here.
+
 python ./capture.py \
     --capture_live_video \
     --video_device 0 \
@@ -13,7 +16,8 @@ python ./capture.py \
     --video_origin_x 512 \
     --video_origin_y 145
 
-# example 2: replay video from a file
+# Example 2: replay video from file recording/video.mp4
+
 # python ./capture.py \
 #     --video_file recording/video.mp4 \
 #     --self_ip 127.0.0.1 \
