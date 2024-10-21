@@ -100,7 +100,7 @@ If you do not specify any command line arguments, the script will use the follow
 
 
 ### Quick launch
-To avoid typing a long command line every time, you can create a shell script to launch the script with your preferred arguments. See [quick_launch.ps1](https://github.com/zixingjiang/py-us-video-capture/blob/main/quick_launch.ps1) for Windows Powershell and [quick_launch.sh](https://github.com/zixingjiang/py-us-video-capture/blob/main/quick_launch.ps1) for Bash.
+To avoid typing a long command line every time, you can create a shell script to launch the script with your preferred arguments. See [quick_launch.ps1](https://github.com/zixingjiang/py-us-video-capture/blob/main/quick_launch.ps1) for Windows Powershell and [quick_launch.bash](https://github.com/zixingjiang/py-us-video-capture/blob/main/quick_launch.bash) for Bash.
 
 
 ## Known issues
