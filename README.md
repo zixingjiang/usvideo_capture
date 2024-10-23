@@ -12,7 +12,7 @@ This repository contains a simple python script, [capture.py](https://github.com
 
 **Compatibility**: This script is tested with [Wisonic Clover](https://www.wisonic.com/en/list_26/189.html) and [bk5000](https://www.bkmedical.com/systems/bk5000/). Theoretically, it can be used with any ultrasound machine or other device with video export function.
 
-**Supported OS**: Tested on [Windows 11](https://www.microsoft.com/en-us/software-download/windows11) and [Ubuntu 24.04](https://ubuntu.com/download/desktop).
+**Supported OS**: Tested on Windows 11 and Ubuntu 24.04.
 
 ## Getting started 
 1. Install [Python3](https://www.python.org/downloads/). Recommended version: 3.11. 
@@ -73,30 +73,30 @@ options:
 
 
 ### Frame origin
-If you need to use the calibration and target selection functions, you need to specify the origin of the ultrasonic video frame. The origin may be different for different ultrasound devices. It is recommended that you capture a video first, then measure the pixel coordinates of the origin in the video and pass them to this script via ```--video_origin_x``` and ```--video_origin_y``` arguments.
+If you need to use the target selection feature, you need to specify the origin of the ultrasound video frame. The origin may be different for different ultrasound devices/probes. Although the script provides a manual calibration function that allows you to set the origin through mouse interaction, it is recommended that you first measure the pixel coordinates of the origin and then pass them to this script via the `--video_origin_x` and `--video_origin_y` arguments, which will be more accurate.
 
 ### UDP communication
 If you need to use UDP communication with the robot for target selection, you need to set the IP and port of the local machine (the device running the script) and the robot.
-- ```--self_ip``` and ```--self_port``` specify the IP address and port number of the local machine.
-- ```--robot_ip``` and ```--robot_port``` specify the IP address and port number of the robot.
+- `--self_ip` and `--self_port` specify the IP address and port number of the local machine.
+- `--robot_ip` and `--robot_port` specify the IP address and port number of the robot.
 
 ### Default values
 If you do not specify any command line arguments, the script will use the following default values:
 | Argument | Default value |
 | --- | --- |
-| ```--capture_live_video``` |```--no-capture_live_video```|
-| ```--video_device``` | 0 |
-| ```--video_file_path``` | recording/video.mp4 |
-| ```--video_save_dir``` | recording |
-| ```--video_save_fps``` | 60 |
-| ```--video_width``` | 1024 |
-| ```--video_height``` | 768 |
-| ```--video_origin_x``` | 512 |
-| ```--video_origin_y``` | 145 |
-| ```--self_ip``` | 127.0.0.1 |
-| ```--self_port``` | 60511 |
-| ```--robot_ip``` | 127.0.0.1 |
-| ```--robot_port``` | 60522 |
+| `--capture_live_video` |`--no-capture_live_video`|
+| `--video_device` | 0 |
+| `--video_file_path` | recording/video.mp4 |
+| `--video_save_dir` | recording |
+| `--video_save_fps` | 60 |
+| `--video_width` | 1024 |
+| `--video_height` | 768 |
+| `--video_origin_x` | 512 |
+| `--video_origin_y` | 145 |
+| `--self_ip` | 127.0.0.1 |
+| `--self_port` | 60511 |
+| `--robot_ip` | 127.0.0.1 |
+| `--robot_port` | 60522 |
 
 
 ### Quick launch

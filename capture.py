@@ -46,6 +46,7 @@ class Capture():
                 
         self.flag_calibrated = False
         self.calibration_points = []
+        self.flag_show_calibration = True
 
         self.state = None
         self.NORMAL = 0
@@ -90,7 +91,9 @@ class Capture():
         cv2.setMouseCallback('Ultrasound Video Capture', self.mouse_callback)
 
         print("Starting ultrasound video capture")
-        print("Press 's' to start/stop recording, 'c' to toggle calibration mode, 't' to toggle target selection mode, 'q' to quit")
+        print("Press 's' to start/stop recording, 'c' to toggle calibration mode, 't' to toggle target selection mode")
+        print("Press 'h' to hide/show calibration line and origin (not available in calibration and target selection modes)")
+        print("Press 'q' to quit")
         print("Recording will be saved in the 'recording' folder")
         print("--------------------")
 
@@ -110,7 +113,7 @@ class Capture():
             '''Draw UI and display video frames'''
 
             # draw calibration line and origin
-            if self.flag_calibrated:
+            if self.flag_calibrated and self.flag_show_calibration:
                 x1, y1 = self.calibration_points[0]
                 _, y2 = self.calibration_points[1]
                 cv2.line(frame, (x1, y1), (x1, y2), YELLOW, 2)
@@ -120,7 +123,11 @@ class Capture():
 
             # UI for calibration point selection
             if self.state == self.CALIBRATION:
-                cv2.putText(frame, "Calibration mode: please mark 10mm depth on the display", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, GREEN, 1)
+                cv2.putText(frame, "Calibration mode: please left-click two points on the scale to mark 10mm depth", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, GREEN, 1)
+                cv2.putText(frame, "Right-click zero on the scale to reset the origin", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, GREEN, 1)
+                if not self.flag_calibrated:
+                    cv2.circle(frame, self.video_origin, 5, YELLOW, -1)
+                    cv2.putText(frame, "Origin", (self.video_origin[0] + 10, self.video_origin[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, YELLOW, 1)
                 if self.current_mouse_position:
                     x, y = self.current_mouse_position
                     cv2.line(frame, (x, 0), (x, frame.shape[0]), GREEN, 1)
@@ -132,8 +139,8 @@ class Capture():
             # UI for target selection
             if self.state == self.TARGET_SELECTION:
                 cv2.putText(frame, "Target selection mode: please select targets for biopsy", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, CYAN, 1)
-                cv2.putText(frame, "Left click to select a target, right click to remove a target", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, CYAN, 1)
-                cv2.putText(frame, "Click the middle mouse button (or press ctrl + left click) to send the target to the robot", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5, CYAN, 1)
+                cv2.putText(frame, "Left-click to select a target, right-click to remove a target", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, CYAN, 1)
+                cv2.putText(frame, "Click the middle mouse button (or press ctrl + left-click) to send the target to the robot", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5, CYAN, 1)
                 if self.current_mouse_position:
                     x, y = self.current_mouse_position
                     x_mm = (x - self.video_origin[0]) * self.pixel_to_mm_ratio
@@ -181,13 +188,10 @@ class Capture():
             elif key == ord('c' or 'C'):
                 if self.state == self.NORMAL:
                     self.state = self.CALIBRATION
-                    self.flag_calibrated = False
                     self.mouse_clicked_points = []
                     print(f"Calibration mode on")
                 elif self.state == self.CALIBRATION:
                     self.state = self.NORMAL
-                    if len(self.calibration_points) == 2:
-                        self.flag_calibrated = True
                     print(f"Calibration mode off")
                 else:
                     print("Cannot toggle calibration mode when in other modes")
@@ -208,6 +212,23 @@ class Capture():
                 else:
                     print("Cannot toggle target selection mode without calibration! Please calibrate first")
 
+            # press 'h' to hide/show calibration line and origin
+            # this is for improving video recording experience
+            # this key should only be used when calibration is done
+            # and current state is NORMAL
+            elif key == ord('h' or 'H'):
+                if self.state == self.NORMAL:
+                    if self.flag_calibrated:
+                        self.flag_show_calibration = not self.flag_show_calibration
+                        if self.flag_show_calibration:
+                            print("show calibration line and origin")
+                        else:
+                            print("hide calibration line and origin")
+                    else:
+                        print("Cannot hide/show calibration line and origin without calibration! Please calibrate first")
+                else:
+                    print("Cannot hide/show calibration line and origin in calibration and target selection modes")
+
             # press 'q' to quit
             elif key == ord('q' or 'Q'):
                 print("Quitting ultrasound video capture")
@@ -227,6 +248,7 @@ class Capture():
     def mouse_callback(self, event, x, y, flags, param):
         self.current_mouse_position = (x, y)
 
+        # select calibration points
         if event == cv2.EVENT_LBUTTONDOWN and self.state == self.CALIBRATION:
             nearest_x, nearest_y = self.find_nearest_white_pixel(x, y)
             self.mouse_clicked_points.append((nearest_x, nearest_y))
@@ -240,13 +262,21 @@ class Capture():
                 _, y2 = self.calibration_points[1]
                 self.pixel_to_mm_ratio = float(10 / abs(y2 - y1))
                 print(f"Calibrated. Pixel to mm ratio: {self.pixel_to_mm_ratio}")
-        
+
+        # select origin
+        elif event == cv2.EVENT_RBUTTONDOWN and self.state == self.CALIBRATION:
+            nearest_x, nearest_y = self.find_nearest_white_pixel(x, y)
+            self.video_origin = (int(1024*0.5), nearest_y) 
+            print(f"Origin set at: ({self.video_origin[0]}, {self.video_origin[1]})")
+
+        # select targets
         elif event == cv2.EVENT_LBUTTONDOWN and not (flags & cv2.EVENT_FLAG_CTRLKEY) and self.state == self.TARGET_SELECTION:
             self.mouse_clicked_points.append((x,y))
             x_mm = (x - self.video_origin[0]) * self.pixel_to_mm_ratio
             y_mm = (y - self.video_origin[1]) * self.pixel_to_mm_ratio
             print(f"Selected target: (x = {x_mm} mm, y = {y_mm} mm)")
 
+        # remove targets
         elif event == cv2.EVENT_RBUTTONDOWN and self.state == self.TARGET_SELECTION:
             if self.mouse_clicked_points:
                 point_to_remove = self.find_closest_point((x, y)) 
@@ -255,6 +285,7 @@ class Capture():
                 y_mm = (y - self.video_origin[1]) * self.pixel_to_mm_ratio
                 print(f"Removed target: (x = {x_mm} mm, y = {y_mm} mm)")
 
+        # send targets to robot
         elif (event == cv2.EVENT_MBUTTONDOWN or (event == cv2.EVENT_LBUTTONDOWN and (flags & cv2.EVENT_FLAG_CTRLKEY))) and self.state == self.TARGET_SELECTION:
             if self.mouse_clicked_points:
                 point_to_send = self.find_closest_point((x, y))               
@@ -264,7 +295,8 @@ class Capture():
                 y_mm = (point_to_send[1] - self.video_origin[1]) * self.pixel_to_mm_ratio
                 self.udp_send((x_mm, y_mm))
 
-    def find_nearest_white_pixel(self, x, y, search_radius=100):
+    # for improving calibration experience
+    def find_nearest_white_pixel(self, x, y, search_radius=50):
         image = self.current_frame
         height, width = image.shape[:2]
         min_dist = float('inf')
