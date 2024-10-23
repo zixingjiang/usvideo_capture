@@ -1,5 +1,5 @@
 # User guide
-**Video demo: [demo.mp4](https://github.com/zixingjiang/py-us-video-capture/raw/refs/heads/main/demo.mp4).**
+**Video demo: [demo.mp4](https://github.com/zixingjiang/py-us-video-capture/raw/refs/heads/main/doc/demo.mp4).**
 
 If the script is successfully launched, you will see a window displaying the video and a log in the terminal.
 
