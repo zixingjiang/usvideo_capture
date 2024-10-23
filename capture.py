@@ -9,6 +9,7 @@ import socket      # for UDP communication
 import struct      # for packing data
 import argparse    # for command line arguments
 import platform    # for OS detection
+import numpy as np # for array operations
 
 class Capture():
 
@@ -95,6 +96,11 @@ class Capture():
 
         while not self.capture_live_video or self.capture.isOpened():
             ret, frame = self.capture.read()
+
+            # this is for pass current frame to self.find_nearest_white_pixel
+            # which is used in self.mouse_callback （calibration mode）
+            # it may be replaced with a better parameter passing method in the future
+            self.current_frame = frame
 
             # if the video reaches the end, replay the video
             if not ret and not self.capture_live_video:
@@ -222,8 +228,9 @@ class Capture():
         self.current_mouse_position = (x, y)
 
         if event == cv2.EVENT_LBUTTONDOWN and self.state == self.CALIBRATION:
-            self.mouse_clicked_points.append((x,y))
-            print(f"Calibration point clicked at: ({x}, {y})")
+            nearest_x, nearest_y = self.find_nearest_white_pixel(x, y)
+            self.mouse_clicked_points.append((nearest_x, nearest_y))
+            print(f"Calibration point clicked at: ({nearest_x}, {nearest_y})")
             if len(self.mouse_clicked_points) == 2:
                 self.pixel_to_mm_ratio = 10 / abs(self.mouse_clicked_points[1][1] - self.mouse_clicked_points[0][1])
                 self.calibration_points = self.mouse_clicked_points.copy()
@@ -256,6 +263,22 @@ class Capture():
                 x_mm = (point_to_send[0] - self.video_origin[0]) * self.pixel_to_mm_ratio
                 y_mm = (point_to_send[1] - self.video_origin[1]) * self.pixel_to_mm_ratio
                 self.udp_send((x_mm, y_mm))
+
+    def find_nearest_white_pixel(self, x, y, search_radius=100):
+        image = self.current_frame
+        height, width = image.shape[:2]
+        min_dist = float('inf')
+        nearest_pixel = (x, y)
+    
+        for i in range(max(0, y - search_radius), min(height, y + search_radius)):
+            for j in range(max(0, x - search_radius), min(width, x + search_radius)):
+                if np.all(image[i, j] == 255):  # Check if the pixel is white
+                    dist = (i - y) ** 2 + (j - x) ** 2
+                    if dist < min_dist:
+                        min_dist = dist
+                        nearest_pixel = (j, i)
+    
+        return nearest_pixel
 
     def find_closest_point(self, mouse_position):
         x, y = mouse_position
