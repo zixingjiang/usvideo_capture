@@ -1,0 +1,48 @@
+# video capture settings
+video_capture:
+
+  # [source] specifies the source of the captured video. 
+  # It can be a digit representing the video device or a string representing the path of the video file.
+  # Examples:
+  # source: 0 (if you are using a laptop, this could be your built-in webcam)
+  # source: recordings/video.mp4
+  # Remarks for Linux user: for video device such as /dev/video0, just fill 0 here.
+  source: 0
+
+  # [width] and [height] specify the frame resolution for the captured video.
+  # The higher their values, the higher the performance requirements for the video capture device.
+  # High resolution may reduce the capture frame rate.
+  width: 1600
+  height: 1200
+
+
+# video recording settings
+video_recording:
+
+  # [directory] ​specify the directory where recorded video files are stored.
+  # It must be a legal directory name for your operating system.
+  directory: recordings
+  
+  # [fps] specify the frame rate of recorded videos.
+  # The higher its value, the higher the performance requirements for the video capture device.
+  fps: 60
+
+
+# UDP communication settings
+udp_communication:
+
+  # [sender_ip] and [sender_port] specify the socket address of the sender (the capture script).
+  # We use IPV4 here. The port should not be occupied by other programs.
+  sender_ip: 127.0.0.1
+  sender_port: 60511
+
+  # [receiver_ip] and [receiver_port] specify the socket address of the receiver (other programs).
+  # We use IPV4 here. The port should not be occupied by other programs.
+  receiver_ip: 127.0.0.1
+  receiver_port: 60522
+  
+  # [format] specifies the string format when packing the udp packet
+  # See the Python documentation for more details
+  # https://docs.python.org/3/library/struct.html#format-strings
+  # The receiver should use the same format to unpack the packet
+  format: '2d'

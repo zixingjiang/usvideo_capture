@@ -1,3 +1,4 @@
 opencv_contrib_python==4.9.0.80
 opencv_python==4.9.0.80
 numpy<2
+pyyaml==6.0.2 
