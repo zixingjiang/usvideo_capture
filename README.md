@@ -70,7 +70,7 @@ The script uses the following keyboard and mouse events:
 - `middle click` or `ctrl + left click` - send a target to the receiver 
   
 ## UDP Receiver
-You may use [`udp_sample_receiver.py`](udp_sample_receiver.py) as a reference to unpack the UDP message sent by the script. 
+You may use [`udp_receiver_example.py`](udp_receiver_example.py) as a reference to unpack the UDP message sent by the script. 
 
 ## License
 This repository falls under the [MIT License](LICENSE). 
