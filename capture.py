@@ -599,7 +599,7 @@ class VideoCapturer:
                 target = self.mouse_position
                 self.targets.append(target)
                 target_mm = self.__pixel_coordinates_to_mm_coordinates(target)
-                self.logger.log(f"Target selected at ({target_mm[0]}, {target_mm[1]})")
+                self.logger.log(f"Target selected at ({target_mm[0]} mm, {target_mm[1]} mm)")
 
             # right click: remove a target
             if event == cv2.EVENT_RBUTTONDOWN:
@@ -612,7 +612,7 @@ class VideoCapturer:
                     target_to_remove
                 )
                 self.logger.log(
-                    f"Target removed at ({target_to_remove_mm[0]}, {target_to_remove_mm[1]})"
+                    f"Target removed at ({target_to_remove_mm[0]} mm, {target_to_remove_mm[1]} mm)"
                 )
 
             # middle click: send a selected target to the receiver
