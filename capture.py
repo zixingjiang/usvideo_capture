@@ -645,7 +645,7 @@ class VideoCapturer:
         should_continue = True
 
         # toggle recording
-        if key == ord("r" or "R"):
+        if key == ord("r") or key == ord("R"):
             if not self.is_video_recording:
                 self.is_video_recording = True
                 start_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -671,7 +671,7 @@ class VideoCapturer:
                 self.logger.info("Recording stopped.")
 
         # toggle calibration mode
-        elif key == ord("c" or "C"):
+        elif key == ord("c") or key == ord("C"):
             if self.state == self.NORMAL:
                 self.state = self.CALIBRATION
                 self.logger.info("Entering calibration mode...")
@@ -682,7 +682,7 @@ class VideoCapturer:
                 self.logger.warn("Cannot enter calibration mode in targeting mode")
 
         # toggle targeting mode
-        elif key == ord("t" or "T"):
+        elif key == ord("t") or key == ord("T"):
             if self.is_calibrated:
                 if self.state == self.NORMAL:
                     self.state = self.TARGETING
@@ -699,7 +699,7 @@ class VideoCapturer:
                 self.logger.warn("Cannot enter targeting mode without calibration")
 
         # hide/show annotations
-        elif key == ord("h" or "H"):
+        elif key == ord("h") or key == ord("H"):
             if self.state == self.NORMAL:
                 if self.is_calibrated:
                     self.hide_annotations = not self.hide_annotations
@@ -715,7 +715,7 @@ class VideoCapturer:
                 )
 
         # quit
-        elif key == ord("q" or "Q"):
+        elif key == ord("q") or key == ord("Q"):
             should_continue = False
             self.logger.info("Quitting...")
 
