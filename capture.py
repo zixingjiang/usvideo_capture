@@ -474,7 +474,8 @@ class VideoCapturer:
                 self.logger.error("Failed to capture frame.")
                 break
 
-            if self.using_video_file and (
+            # Resize the frame if necessary
+            if (
                 self.frame.shape[1] != self.video_capture_width
                 or self.frame.shape[0] != self.video_capture_height
             ):
@@ -599,7 +600,9 @@ class VideoCapturer:
                 target = self.mouse_position
                 self.targets.append(target)
                 target_mm = self.__pixel_coordinates_to_mm_coordinates(target)
-                self.logger.log(f"Target selected at ({target_mm[0]} mm, {target_mm[1]} mm)")
+                self.logger.log(
+                    f"Target selected at ({target_mm[0]} mm, {target_mm[1]} mm)"
+                )
 
             # right click: remove a target
             if event == cv2.EVENT_RBUTTONDOWN:
@@ -905,6 +908,7 @@ class VideoCapturer:
         This private method should not be called externally.
         """
         search_radius = 50
+        threshold = 225
         min_dist = float("inf")
         nearest_pixel = pixel_point
         for i in range(
@@ -915,7 +919,7 @@ class VideoCapturer:
                 max(0, pixel_point[0] - search_radius),
                 min(self.video_capture_width, pixel_point[0] + search_radius),
             ):
-                if np.all(self.frame[i, j] == 255):
+                if np.all(self.frame[i, j] >= threshold):
                     dist = (i - pixel_point[1]) ** 2 + (j - pixel_point[0]) ** 2
                     if dist < min_dist:
                         min_dist = dist
