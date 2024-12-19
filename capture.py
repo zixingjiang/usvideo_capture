@@ -832,7 +832,7 @@ class VideoCapturer:
                 )
 
         if self.state == self.TARGETING:
-            cv2.rectangle(self.frame, (5, 10), (500, 80), self.BLACK, -1)
+            cv2.rectangle(self.frame, (5, 10), (630, 80), self.BLACK, -1)
             cv2.putText(
                 self.frame,
                 "Targeting mode: please select targets",
@@ -882,8 +882,17 @@ class VideoCapturer:
                 )
             for target in self.targets:
                 cv2.circle(self.frame, target, 5, self.RED, -1)
-            for target in self.udp_sent_targets:
+            for idx, target in enumerate(self.udp_sent_targets):
                 cv2.circle(self.frame, target, 5, self.GREEN, -1)
+                cv2.putText(
+                    self.frame,
+                    f"{idx+1}",
+                    (target[0] + 10, target[1] - 10),
+                    cv2.FONT_HERSHEY_COMPLEX,
+                    0.5,
+                    self.GREEN,
+                    1,
+                )
 
         return None
 
