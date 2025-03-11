@@ -1,3 +1,4 @@
+.DS_Store
 /recordings/*
 !/recordings/wisonic.mp4
 !/recordings/bk5000.mp4

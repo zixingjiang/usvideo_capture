@@ -390,6 +390,8 @@ class VideoCapturer:
             elif platform.system() == "Linux":
                 video_source = "/dev/video" + str(self.video_capture_source)
                 self.video_capture = cv2.VideoCapture(video_source, cv2.CAP_V4L2)
+            elif platform.system() == "Darwin":
+                self.video_capture = cv2.VideoCapture(self.video_capture_source)
             else:
                 self.logger.error("Unsupported platform.")
                 raise NotImplementedError("Unsupported platform.")
