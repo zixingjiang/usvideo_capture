@@ -350,6 +350,7 @@ class VideoCapturer:
     GREEN = (0, 255, 0)
     CYAN = (255, 255, 0)
     BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
 
     # Image direction constants
     TOP_DOWN = 1
@@ -432,6 +433,8 @@ class VideoCapturer:
         self.mouse_position = None
 
         self.logger.log("Video capturer initialized.")
+
+        self.point_cache = []
 
         return None
 
@@ -607,7 +610,7 @@ class VideoCapturer:
                 )
 
             # right click: remove a target
-            if event == cv2.EVENT_RBUTTONDOWN:
+            if event == cv2.EVENT_RBUTTONDOWN and not (flags & cv2.EVENT_FLAG_CTRLKEY):
                 if not self.targets:
                     self.logger.warn("No targets to remove.")
                     return None
@@ -619,6 +622,12 @@ class VideoCapturer:
                 self.logger.log(
                     f"Target removed at ({target_to_remove_mm[0]} mm, {target_to_remove_mm[1]} mm)"
                 )
+
+            # right click with ctrl key: angle measurement
+            if event == cv2.EVENT_RBUTTONDOWN and (flags & cv2.EVENT_FLAG_CTRLKEY):
+                if len(self.point_cache) == 2:
+                    self.point_cache = []
+                self.point_cache.append(self.mouse_position)
 
             # middle click: send a selected target to the receiver
             if event == cv2.EVENT_MBUTTONDOWN or (
@@ -695,6 +704,7 @@ class VideoCapturer:
                     # clear targets when exiting targeting mode
                     self.targets = []
                     self.udp_sent_targets = []
+                    self.point_cache = []
                 else:
                     self.logger.warn("Cannot enter targeting mode in calibration mode")
             else:
@@ -703,14 +713,14 @@ class VideoCapturer:
         # hide/show annotations
         elif key == ord("h") or key == ord("H"):
             if self.state == self.NORMAL:
-                if self.is_calibrated:
-                    self.hide_annotations = not self.hide_annotations
-                    if self.hide_annotations:
-                        self.logger.info("Hiding annotations...")
-                    else:
-                        self.logger.info("Showing annotations...")
+                # if self.is_calibrated:
+                self.hide_annotations = not self.hide_annotations
+                if self.hide_annotations:
+                    self.logger.info("Hiding annotations...")
                 else:
-                    self.logger.warn("No annotations to hide/show")
+                    self.logger.info("Showing annotations...")
+            # else:
+            #    self.logger.warn("No annotations to hide/show")
             else:
                 self.logger.warn(
                     "Cannot hide/show annotations in calibration and targeting modes"
@@ -731,6 +741,29 @@ class VideoCapturer:
         Draw annotations on the frame according to the current state.
         This private method should not be called externally
         """
+
+        if not self.hide_annotations:
+
+            cv2.rectangle(
+                self.frame,
+                (10, self.video_capture_height - 60),
+                (self.video_capture_width - 10, self.video_capture_height - 20),
+                self.BLACK,
+                -1,
+            )
+
+            cv2.putText(
+                self.frame,
+                "[R] start/stop recording    [C] toggle calibration    [T] toggle target selection",
+                (10, self.video_capture_height - 40),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                self.WHITE,
+                1,
+            )
+
+            pass
+
         if self.is_calibrated and not self.hide_annotations:
             x1, y1 = self.points_for_calibration[0]
             x2, y2 = self.points_for_calibration[1]
@@ -891,6 +924,27 @@ class VideoCapturer:
                     f"{idx+1}",
                     (target[0] + 10, target[1] - 10),
                     cv2.FONT_HERSHEY_COMPLEX,
+                    0.5,
+                    self.GREEN,
+                    1,
+                )
+            for point in self.point_cache:
+                cv2.circle(self.frame, point, 5, self.YELLOW, -1)
+            if self.point_cache.__len__() == 2:
+                if self.point_cache[0][0] <= self.point_cache[1][0]:
+                    left = self.point_cache[0]
+                    right = self.point_cache[1]
+                else:
+                    left = self.point_cache[1]
+                    right = self.point_cache[0]
+                cv2.line(self.frame, left, right, self.YELLOW, 2)
+                cv2.line(self.frame, (left[0], right[1]), right, self.GREEN, 2)
+                degree = np.arctan((left[1]-right[1])/(left[0]-right[0]))*180/np.pi
+                cv2.putText(
+                    self.frame,
+                    f"{degree:.3f} degree",
+                    (right[0] + 20, right[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
                     0.5,
                     self.GREEN,
                     1,
